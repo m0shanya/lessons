@@ -11,8 +11,7 @@ def create_product_table():
                name VARCHAR,
                price INTEGER,
                count INTEGER,
-               comment VARCHAR,
-               datetime DATETIME
+               comment VARCHAR
             );
             """,
         )
