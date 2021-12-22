@@ -1,7 +1,7 @@
 import sqlite3
 
 
-def create_product_table(name: str, price: int, count: int, comment: str):
+def create_product_table():
     with sqlite3.connect("products.sqlite3") as session:
         cursor = session.cursor()
         cursor.execute(
@@ -18,6 +18,7 @@ def create_product_table(name: str, price: int, count: int, comment: str):
         )
         session.commit()
 
+
 def create_product(name: str, price: int, count: int, comment: str):
     with sqlite3.connect("products.sqlite3") as session:
         cursor = session.cursor()
@@ -30,3 +31,5 @@ def create_product(name: str, price: int, count: int, comment: str):
         )
         session.commit()
 
+
+create_product("test", 14, 134, "rr")
