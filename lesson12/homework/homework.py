@@ -1,5 +1,5 @@
 from sqlalchemy_utils import create_database, database_exists
-from sqlalchemy import create_engine, Integer, String, Column, Text, ForeignKey
+from sqlalchemy import create_engine, Integer, String, Column, Text, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -16,8 +16,6 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String)
 
-    products = relationship("Product", back_populates="user")
-
 
 class Product(Base):
     __tablename__ = "product"
@@ -25,19 +23,18 @@ class Product(Base):
     name = Column(String)
     cost = Column(Integer)
 
-    user = relationship("User", back_populates="products")
-
 
 class Purchases(Base):
-    __tablename__ = "purchases"
+    __tablename__ = "purchase"
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-    product_id = Column(Integer, ForeignKey("product.id"), nullable=False)
     count = Column(Integer)
-    # date = Column()
+    # date = Column(DateTime, default=datetime.utcnow)
 
-    user_0 = relationship("User", back_populates="products")
-    products_0 = relationship("Product", back_populates="user")
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user = relationship("User", backref="purchases")
+
+    product_id = Column(Integer, ForeignKey("product.id"), nullable=False)
+    products = relationship("Product", backref="purchases")
 
 
 """def create_user(user, k):
@@ -87,15 +84,15 @@ if __name__ == "__main__":
     choice = int(input("1 - Start. || 2 - Exit.\nYour choice: "))
 
     while choice == 1:
-        k = 0
         name = str(input("Input your name: "))
         numb = 0
         print("----Регистрация пользователя----\n")
         # create_user(user, k)
-        user = User(email=f"{name}-{numb}@email.com")
+        user = User(email=f"{name}_{numb}@email.com")
         session.add(user)
         session.commit()
-        print(f"Пользователь {name}-{numb} зарегестрирован")
+        print(f"Пользователь {name}_{numb} зарегестрирован")
+
         print("----Регистрация товара----\n")
         # create_prod(product)
         name_prod = input('Введите название товара: ')
@@ -104,6 +101,7 @@ if __name__ == "__main__":
         session.add(product)
         session.commit()
         print(f"Товар {product} стоимостью {price} зарегестрирован")
+
         print("----Регистрация покупки----\n")
         # purchase(user, product)
         print('Выберете предмет, который вы хотите приобрести.')
@@ -113,10 +111,11 @@ if __name__ == "__main__":
             print(f'Номер товара №{i[0]}, название {i[1]}')
         n = int(input("Введите номер товара для преобретения: "))
         c = int(input("Введите количество товара для преобретения: "))
-        buy = Purchases(user_id=user.id, produst_id=n, count=c)
+        buy = Purchases(user_id=user.id, product_id=n, count=c)
         session.add(buy)
         session.commit()
-        k += 1
+
+        numb += 1
         i = int(input("Желаете продолжить? 1 - да || 2 - нет"))
         if i == 2:
             break
