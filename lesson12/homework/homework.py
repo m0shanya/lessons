@@ -82,10 +82,9 @@ if __name__ == "__main__":
     session = Session()
 
     choice = int(input("1 - Start. || 2 - Exit.\nYour choice: "))
-
+    numb = 0
     while choice == 1:
         name = str(input("Input your name: "))
-        numb = 0
         print("----Регистрация пользователя----\n")
         # create_user(user, k)
         user = User(email=f"{name}_{numb}@email.com")
