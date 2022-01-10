@@ -40,7 +40,7 @@ class Purchases(Base):
     products_0 = relationship("Product", back_populates="user")
 
 
-def create_user(user, k):
+"""def create_user(user, k):
     user = User(email=f"user-{k}@email.com")
     session.add(user)
     session.commit()
@@ -70,7 +70,7 @@ def purchase(user, product):
     session.add(buy)
     session.commit()
     return buy
-
+"""
 
 if __name__ == "__main__":
     engine = create_engine(
@@ -86,17 +86,37 @@ if __name__ == "__main__":
 
     choice = int(input("1 - Start. || 2 - Exit.\nYour choice: "))
 
-    user = None
-    product = None
-
     while choice == 1:
         k = 0
+        name = str(input("Input your name: "))
+        numb = 0
         print("----Регистрация пользователя----\n")
-        create_user(user, k)
+        # create_user(user, k)
+        user = User(email=f"{name}-{numb}@email.com")
+        session.add(user)
+        session.commit()
+        print(f"Пользователь {name}-{numb} зарегестрирован")
         print("----Регистрация товара----\n")
-        create_prod(product)
+        # create_prod(product)
+        name_prod = input('Введите название товара: ')
+        price = float(input('Введите цену: '))
+        product = Product(name=name_prod, cost=price)
+        session.add(product)
+        session.commit()
+        print(f"Товар {product} стоимостью {price} зарегестрирован")
         print("----Регистрация покупки----\n")
-        purchase(user, product)
+        # purchase(user, product)
+        print('Выберете предмет, который вы хотите приобрести.')
+        prod = session.query(Product.id, Product.name)
+        all_prod = prod.all()
+        for i in all_prod:
+            print(f'Номер товара №{i[0]}, название {i[1]}')
+        n = int(input("Введите номер товара для преобретения: "))
+        c = int(input("Введите количество товара для преобретения: "))
+        buy = Purchases(user_id=user.id, produst_id=n, count=c)
+        session.add(buy)
+        session.commit()
+        k += 1
         i = int(input("Желаете продолжить? 1 - да || 2 - нет"))
         if i == 2:
             break
